@@ -4,31 +4,70 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node.js URL Shortener</title>
   <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <link rel="stylesheet" href="./app.css">
 </head>
 
 <body>
   <div id="app">
-    <section class="section">
-      <div class="container">
-        <h1 class="title">
-          Hello World
-        </h1>
-        <p class="subtitle">
-          My first website with <strong>Bulma</strong>!
-        </p>
-      </div>
-    </section>
-    <div class="container">
-      <div class="notification">
-        This container is <strong>centered</strong> on desktop.
-      </div>
-      <section>
-        <b-field label="Long URL">
-          <b-input></b-input>
-        </b-field>
-        <b-button type="is-info">Submit</b-button>
+    <div class="container" v-cloak>
+      <section class="section" v-once>
+        <div class="container animated fadeInUp">
+          <h1 class="title">
+            <span>Node.js URL Shortener</span>
+            <span><a href="https://travis-ci.org/nlmedina/node-url-shortener"><img
+                  src="https://travis-ci.org/nlmedina/node-url-shortener.svg?branch=master"
+                  alt="Travis-CI status" /></a></span>
+            <span><a href="https://github.com/nlmedina/node-url-shortener">
+                <b-icon pack="mdi" icon="github-circle" size="is-medium"></b-icon>
+              </a></span>
+          </h1>
+          <p class="subtitle">
+            <span>Powered by <a href="https://bit.ly">bit.ly</a></span>
+          </p>
+        </div>
       </section>
+      <section>
+        <form @submit="submit">
+          <b-field label="Long URL" :message="error" :type="error ? 'is-danger' : ''">
+            <b-input v-model="longUrl" @focus="clearUrlField"></b-input>
+          </b-field>
+          <div class="button-container">
+            <b-button type="is-info" :disabled="submitting" :loading="submitting" @click="submit">Submit</b-button>
+            <b-button type="is-info" :disabled="gettingPreviousResults" :loading="gettingPreviousResults"
+              @click="togglePreviousresults">
+              {{ showingPreviousResults ? 'Hide Previous Results' : 'Show Previous Results' }}</b-button>
+          </div>
+        </form>
+      </section>
+      <section v-if="shortUrl" class="animated fadeInUp">
+        <b-message type="is-success">
+          <div class="short-url-inline"><span>{{ shortUrl }}</span>
+            <b-button type="is-info" @click="handleCopyClick">{{ linkCopied ? 'Copied!' : 'Copy' }}</b-button>
+            <div style="display: none"><textarea id="short-url-text" :value="shortUrl"></textarea></div>
+          </div>
+        </b-message>
+      </section>
+      <transition enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
+      <section v-if="showingPreviousResults">
+        <b-table :data="previousResults">
+          <template slot-scope="props">
+            <b-table-column field="timestamp" label="Timestamp" class="col-timestamp">
+              <span class="tag is-success">{{ props.row.timestamp }}</span>
+            </b-table-column>
+            <b-table-column field="longUrl" label="Long URL">
+              <a :href="props.row.longUrl" target="_blank">{{ props.row.longUrl }}</a>
+            </b-table-column>
+            <b-table-column field="link" label="Short URL">
+                <a :href="props.row.link" target="_blank">{{ props.row.link }}</a>
+            </b-table-column>
+          </template>
+        </b-table>
+      </section>
+    </transition>
     </div>
   </div>
 
@@ -36,6 +75,10 @@
   <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.30.1/date_fns.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+  <!-- Vue Clipboard bindings courtesy of https://github.com/Inndy/vue-clipboard2 -->
+  <script src="./vue-clipboard.min.js"></script>
   <script src="./app.js"></script>
 </body>
 

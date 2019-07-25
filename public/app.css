@@ -1,0 +1,32 @@
+[v-cloak] { display:none; }
+
+.title {
+    display: flex;
+    align-items: center;
+}
+
+.title > span {
+    margin-right: 1rem;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container > section:not(:first-child) {
+    margin-top: 1rem;
+}
+
+.short-url-inline {
+    display: flex;
+    align-items: center;
+}
+
+.short-url-inline > *:first-child {
+    margin-right: 1rem;
+}
+
+.col-timestamp > span {
+    min-width: 200px;
+}
