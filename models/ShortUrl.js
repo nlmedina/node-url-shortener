@@ -6,7 +6,7 @@ class ShortUrl {
   static async getAll() {
     try {
       const fileContentsBuffer = await readFile(
-        process.env.OUTPUT_FILE,
+        process.env.OUTPUT_FILE || '/tmp/results.txt',
         'utf-8'
       );
 
@@ -79,7 +79,7 @@ class ShortUrl {
     this.timestamp = Date.now();
 
     const text = `${this.timestamp} - ${this.longUrl} ${this.link}\n`;
-    await appendFile(process.env.OUTPUT_FILE, text);
+    await appendFile(process.env.OUTPUT_FILE || '/tmp/results.txt', text);
   }
 }
 
