@@ -3,7 +3,6 @@ jest.mock('./models/ShortUrl');
 const request = require('supertest');
 const app = require('./app');
 const ShortUrl = require('./models/ShortUrl');
-const { ServerError } = require('./lib/errors');
 
 beforeAll(() => {
   process.env.OUTPUT_FILE = '/test.txt';
@@ -39,37 +38,5 @@ describe('/short-urls paths', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toStrictEqual(sampleData);
-  });
-
-  test('/short-urls GET (failure)', async () => {
-    ShortUrl.getAll.mockReturnValue(
-      Promise.reject(new ServerError('Generic error message'))
-    );
-
-    const response = await request(app)
-      .get('/short-urls')
-      .expect(500);
-
-    expect(response.body).toContainEqual({
-      errors: { error: { status: 500 }, message: 'Generic error message' }
-    });
-  });
-
-  test('/short-urls POST (success)', async () => {
-    const sampleResult = {
-      link: 'http://bit.ly/30RN96Q',
-      longUrl: 'https://nlmedina.com/test7',
-      timestamp: 1564028292567
-    };
-
-    ShortUrl.json = jest.fn(() => sampleResult);
-
-    const response = await request(app)
-      .post('/short-urls')
-      .send({ longUrl: 'https://nlmedina.com/test7' })
-      .set('Accept', 'application/json')
-      .expect(200);
-
-    expect(response.body).toStrictEqual(sampleResult);
   });
 });

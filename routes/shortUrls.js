@@ -17,8 +17,6 @@ router.post('/', async ({ body: { longUrl } }, res, next) => {
     await shortUrl.shorten();
     await shortUrl.save();
 
-    console.log(shortUrl.json);
-
     res.json(shortUrl.json);
   } catch (e) {
     next(e);
