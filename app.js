@@ -27,7 +27,7 @@ app.use(require('./routes'));
 app.use('/', express.static('public'));
 
 // Use full dev error handler in development
-if (!isProduction && !isTest) {
+if (!isProduction) {
   // eslint-disable-next-line no-unused-vars
   app.use((err, _, res, next) => {
     // eslint-disable-next-line no-console
