@@ -2,6 +2,9 @@
   "name": "url-shortener",
   "version": "1.0.0",
   "description": "URL Shortener REST API Demo",
+  "engines": {
+    "node": ">=10.13.0"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node -r dotenv/config index.js",
@@ -29,5 +32,9 @@
     "jest": "^24.8.0",
     "prettier": "^1.18.2",
     "supertest": "^4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nlmedina/node-url-shortener"
   }
 }
