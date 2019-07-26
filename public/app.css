@@ -1,5 +1,14 @@
 [v-cloak] { display:none; }
 
+a {
+    color: #167df0;
+}
+
+.input:focus {
+    border-color: #167df0;
+    box-shadow: 0 0 0 0.125em rgba(22,125,240,.25)
+}
+
 .title {
     display: flex;
     align-items: center;
