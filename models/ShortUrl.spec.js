@@ -1,14 +1,26 @@
-jest.mock('../services/bitly');
-jest.mock('../lib/files');
-
 const ShortUrl = require('./ShortUrl');
-
 const { readFile, appendFile } = require('../lib/files');
 const { shorten: bitlyShorten } = require('../services/bitly');
+
+jest.mock('../services/bitly');
+jest.mock('../lib/files');
 
 const longUrl = 'https://nlmedina.com';
 const link = 'https://bit.ly/1234';
 const timestamp = Date.now();
+
+const now = Date.now();
+Date.now = jest.fn().mockReturnValue(now);
+
+const ACTUAL_OUTPUT_FILE = process.env.OUTPUT_FILE;
+
+afterAll(() => {
+  process.env.OUTPUT_FILE = ACTUAL_OUTPUT_FILE;
+});
+
+afterEach(() => {
+  appendFile.mockReset();
+});
 
 describe('short url', () => {
   test('short url is constructed from long url', () => {
@@ -26,7 +38,7 @@ describe('short url', () => {
   });
 
   test('short url shorten method calls bitly shortener method with correct long url', async () => {
-    bitlyShorten.mockReturnValue(Promise.resolve({ data: { link } }));
+    bitlyShorten.mockReturnValueOnce(Promise.resolve({ data: { link } }));
 
     const shortUrl = new ShortUrl(longUrl);
     await shortUrl.shorten();
@@ -92,7 +104,7 @@ describe('short url', () => {
   test('short url get all static method throws error if file not found', async () => {
     const mockError = new Error('ENONENT');
     mockError.code = 'ENOENT';
-    readFile.mockReturnValue(Promise.reject(mockError));
+    readFile.mockReturnValueOnce(Promise.reject(mockError));
 
     await expect(ShortUrl.getAll()).rejects.toThrow(
       'Could not connect to data. Please contact system administrator.'
@@ -100,7 +112,7 @@ describe('short url', () => {
   });
 
   test('short url get all static method throws error in case of generic read error', async () => {
-    readFile.mockReturnValue(Promise.reject(new Error()));
+    readFile.mockReturnValueOnce(Promise.reject(new Error()));
 
     await expect(ShortUrl.getAll()).rejects.toThrow(
       'Server error. Please contact system administrator.'
@@ -118,8 +130,6 @@ describe('short url', () => {
 
   test('short url save method calls appendFile correctly', async () => {
     process.env.OUTPUT_FILE = '/dev/null';
-    const now = Date.now();
-    Date.now = jest.fn().mockReturnValue(now);
 
     const shortUrl = new ShortUrl(longUrl);
     shortUrl.link = link;
@@ -130,5 +140,20 @@ describe('short url', () => {
 
     expect(appendFile).toHaveBeenCalledTimes(1);
     expect(appendFile).toHaveBeenCalledWith(process.env.OUTPUT_FILE, text);
+  });
+
+  test('short url save method calls appendFile correctly (OUTPUT_FILE env fallback)', async () => {
+    // Clear out env file for testing
+    process.env.OUTPUT_FILE = '';
+
+    const shortUrl = new ShortUrl(longUrl);
+    shortUrl.link = link;
+
+    await shortUrl.save();
+
+    const text = `${now} - ${shortUrl.longUrl} ${shortUrl.link}\n`;
+
+    expect(appendFile).toHaveBeenCalledTimes(1);
+    expect(appendFile).toHaveBeenCalledWith('/tmp/results.txt', text);
   });
 });
