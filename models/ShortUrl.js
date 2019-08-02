@@ -22,9 +22,7 @@ class ShortUrl {
         });
     } catch (e) {
       if (e.code === 'ENOENT') {
-        throw new ServerError(
-          'Could not connect to data. Please contact system administrator.'
-        );
+        return [];
       }
       throw new ServerError(
         'Server error. Please contact system administrator.'

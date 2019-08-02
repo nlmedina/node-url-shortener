@@ -52,22 +52,28 @@
         </b-message>
       </section>
       <transition enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <section v-if="showingPreviousResults">
-        <b-table :data="previousResults">
-          <template slot-scope="props">
-            <b-table-column field="timestamp" label="Timestamp" class="col-timestamp">
-              <span class="tag is-success">{{ props.row.timestamp }}</span>
-            </b-table-column>
-            <b-table-column field="longUrl" label="Long URL">
-              <a :href="props.row.longUrl" target="_blank">{{ props.row.longUrl }}</a>
-            </b-table-column>
-            <b-table-column field="link" label="Short URL">
+        <section v-if="previousResultsError">
+          <b-message type="is-danger">{{ previousResultsError }}</b-message>
+        </section>
+        <section v-if="showingPreviousResults">
+          <b-message type="is-warning" v-if="previousResults.length === 0">
+            No shortened URLs found.
+          </b-message>
+          <b-table :data="previousResults">
+            <template slot-scope="props">
+              <b-table-column field="timestamp" label="Timestamp" class="col-timestamp">
+                <span class="tag is-success">{{ props.row.timestamp }}</span>
+              </b-table-column>
+              <b-table-column field="longUrl" label="Long URL">
+                <a :href="props.row.longUrl" target="_blank">{{ props.row.longUrl }}</a>
+              </b-table-column>
+              <b-table-column field="link" label="Short URL">
                 <a :href="props.row.link" target="_blank">{{ props.row.link }}</a>
-            </b-table-column>
-          </template>
-        </b-table>
-      </section>
-    </transition>
+              </b-table-column>
+            </template>
+          </b-table>
+        </section>
+      </transition>
     </div>
   </div>
 

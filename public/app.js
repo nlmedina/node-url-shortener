@@ -38,6 +38,7 @@ new Vue({
     submit: async function(e) {
       e.preventDefault();
       this.submitting = true;
+      this.previousResultsError = '';
 
       try {
         const response = await axios.post('/short-urls', {

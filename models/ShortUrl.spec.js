@@ -101,14 +101,12 @@ describe('short url', () => {
     await expect(ShortUrl.getAll()).resolves.toStrictEqual(expectedResult);
   });
 
-  test('short url get all static method throws error if file not found', async () => {
+  test('short url get all static method returns an empty array if file not found', async () => {
     const mockError = new Error('ENONENT');
     mockError.code = 'ENOENT';
     readFile.mockReturnValueOnce(Promise.reject(mockError));
 
-    await expect(ShortUrl.getAll()).rejects.toThrow(
-      'Could not connect to data. Please contact system administrator.'
-    );
+    await expect(ShortUrl.getAll()).resolves.toStrictEqual([]);
   });
 
   test('short url get all static method throws error in case of generic read error', async () => {
