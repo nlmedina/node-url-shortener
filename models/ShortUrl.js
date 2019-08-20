@@ -31,7 +31,15 @@ class ShortUrl {
   }
 
   constructor(longUrl) {
-    this.longUrl = longUrl;
+    if (
+      !/^.*:\/\/.*/.test(longUrl) &&
+      // eslint-disable-next-line no-useless-escape
+      /^[\w\d]*\.[\w\d\.]*[\w\d]$/.test(longUrl)
+    ) {
+      this.longUrl = `http://${longUrl}`;
+    } else {
+      this.longUrl = longUrl;
+    }
   }
 
   get json() {

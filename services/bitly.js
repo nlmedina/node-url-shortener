@@ -1,9 +1,8 @@
 const axios = require('axios');
-const { validateUrl } = require('../lib/regex');
 const { ServerError, ValidationError } = require('../lib/errors');
 
 const shorten = async longUrl => {
-  if (typeof longUrl !== 'string' || !validateUrl(longUrl)) {
+  if (typeof longUrl !== 'string') {
     throw new ValidationError('Invalid longUrl', ['longUrl']);
   }
 
@@ -22,8 +21,7 @@ const shorten = async longUrl => {
     return response.data.link;
   } catch (e) {
     // Sanitize errors received from bit.ly to prevent leaking unecessary data
-
-    if (e.message === 'INVALID_ARG_LONG_URL') {
+    if (e.response.data.message === 'INVALID_ARG_LONG_URL') {
       throw new ValidationError('Received invalid longUrl error from bit.ly', [
         'longUrl'
       ]);

@@ -29,6 +29,12 @@ describe('short url', () => {
     expect(shortUrl.longUrl).toBe(longUrl);
   });
 
+  test('short url with no protocol section gets appended http://', () => {
+    const shortUrl = new ShortUrl('www.google.com');
+
+    expect(shortUrl.longUrl).toBe(`http://www.google.com`);
+  });
+
   test('short url json getter outputs correctly', () => {
     const shortUrl = new ShortUrl(longUrl);
     shortUrl.link = link;
